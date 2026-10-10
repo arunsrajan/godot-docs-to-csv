@@ -42,3 +42,7 @@ def to_chat(batch):
 
 dataset = dataset.map(to_chat, batched=True)  # then train with SFTTrainer on the "text" field
 ```
+
+## License
+
+MIT, see [LICENSE](LICENSE). The generated dataset is derived from the Godot documentation, which is licensed under CC BY 3.0.
