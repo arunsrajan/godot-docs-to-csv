@@ -43,6 +43,25 @@ def to_chat(batch):
 dataset = dataset.map(to_chat, batched=True)  # then train with SFTTrainer on the "text" field
 ```
 
+The dataset generated from the Godot 4.7 docs (24,631 rows) is published on Hugging Face as
+[arunsrajan/godot-docs-dataset](https://huggingface.co/datasets/arunsrajan/godot-docs-dataset).
+
+## Colab notebooks
+
+| Notebook | What it does | GPU |
+| --- | --- | --- |
+| [Docs assistant](notebooks/Qwen3_5_2B_Godot_Docs_Tool_Calling.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/arunsrajan/godot-docs-to-csv/blob/main/notebooks/Qwen3_5_2B_Godot_Docs_Tool_Calling.ipynb) | Gives Qwen3.5-2B a `search_godot_docs` tool over the dataset. `ask_with_docs()` always searches before answering. Optionally fine-tunes the model with LoRA on tool-calling conversations built from the dataset. | Free T4 |
+| [Coding assistant](notebooks/Qwen3_5_Godot_Coding_Assistant.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/arunsrajan/godot-docs-to-csv/blob/main/notebooks/Qwen3_5_Godot_Coding_Assistant.ipynb) | Qwen3.5-4B in thinking mode with `search_godot_docs` and `check_gdscript`, which checks the model's GDScript with Godot's own parser (`godot --headless --check-only`) so it can fix errors before answering. No training. | Free T4 |
+| [Generate reasoning examples](notebooks/Qwen3_5_9B_Generate_Reasoning_Examples.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/arunsrajan/godot-docs-to-csv/blob/main/notebooks/Qwen3_5_9B_Generate_Reasoning_Examples.ipynb) | Step 1 of 2. Qwen3.5-9B (with vLLM) solves coding tasks and API questions in thinking mode with both tools. Only examples whose final GDScript passes Godot's checker are kept and pushed to a private Hugging Face dataset. | A100, or L4 with FP8 |
+| [Thinking fine-tune](notebooks/Qwen3_5_2B_Thinking_Finetune.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/arunsrajan/godot-docs-to-csv/blob/main/notebooks/Qwen3_5_2B_Thinking_Finetune.ipynb) | Step 2 of 2. Fine-tunes Qwen3.5-2B on those examples (80% reasoning) and measures, before and after, whether it finishes thinking, uses the tools and writes GDScript that passes the checker. | Free T4 |
+
+Where to start:
+
+- **Godot API questions:** the docs assistant. Try `ask_with_docs()` before training: searching first fixes most
+  answers a small model gets wrong from memory.
+- **Writing GDScript:** the coding assistant.
+- **A small model that reasons and checks its own code:** the two thinking notebooks, in order.
+
 ## License
 
 MIT, see [LICENSE](LICENSE). The generated dataset is derived from the Godot documentation, which is licensed under CC BY 3.0.
